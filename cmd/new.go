@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,7 +25,10 @@ Examples:
   forgectl new                          # Interactive wizard
   forgectl new my-app                   # Quick create
   forgectl new my-app -t go -l MIT      # With flags
-  forgectl new my-app --no-remote       # Local only`,
+  forgectl new my-app --no-remote       # Local only
+  forgectl new my-app --editorconfig    # With .editorconfig
+  forgectl new my-app --codeowners      # With CODEOWNERS
+  forgectl new my-app --no-security     # Without SECURITY.md`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runNew,
 }
@@ -35,7 +39,7 @@ func runNew(cmd *cobra.Command, args []string) error {
 	interactive := len(args) == 0 && ui.IsTerminal()
 
 	if interactive {
-		return runNewInteractive()
+		return runNewInteractive(cmd)
 	}
 
 	name := args[0]
@@ -50,6 +54,10 @@ func runNew(cmd *cobra.Command, args []string) error {
 	noCI, _ := cmd.Flags().GetBool("no-ci")
 	ci, _ := cmd.Flags().GetString("ci")
 	hooks, _ := cmd.Flags().GetBool("hooks")
+	editorConfig, _ := cmd.Flags().GetBool("editorconfig")
+	codeowners, _ := cmd.Flags().GetBool("codeowners")
+	security, _ := cmd.Flags().GetBool("security")
+	jsonOutput := isJSONOutput(cmd)
 
 	cfg, err := config.New()
 	if err != nil {
@@ -58,24 +66,48 @@ func runNew(cmd *cobra.Command, args []string) error {
 
 	mgr := project.NewManager(cfg)
 	opts := project.NewProjectOptions{
-		Name:        name,
-		Description: description,
-		License:     license,
-		Template:    template,
-		Provider:    provider,
-		Remote:      remote,
-		LocalPath:   localPath,
-		Private:     private,
-		NoRemote:    noRemote,
-		NoCI:        noCI,
-		CI:          ci,
-		Hooks:       hooks,
+		Name:         name,
+		Description:  description,
+		License:      license,
+		Template:     template,
+		Provider:     provider,
+		Remote:       remote,
+		LocalPath:    localPath,
+		Private:      private,
+		NoRemote:     noRemote,
+		NoCI:         noCI,
+		CI:           ci,
+		Hooks:        hooks,
+		EditorConfig: editorConfig,
+		Codeowners:   codeowners,
+		Security:     security,
 	}
 
-	return mgr.Create(opts)
+	if err := mgr.Create(opts); err != nil {
+		return err
+	}
+
+	if jsonOutput {
+		type newResult struct {
+			Name     string `json:"name"`
+			Path     string `json:"path"`
+			Template string `json:"template"`
+			License  string `json:"license"`
+		}
+		result := newResult{
+			Name:     name,
+			Path:     localPath,
+			Template: template,
+			License:  license,
+		}
+		data, _ := json.MarshalIndent(result, "", "  ")
+		fmt.Println(string(data))
+	}
+
+	return nil
 }
 
-func runNewInteractive() error {
+func runNewInteractive(cmd *cobra.Command) error {
 	ui.Header("Create New Project")
 
 	cfg, err := config.New()
@@ -113,12 +145,21 @@ func runNewInteractive() error {
 	// Step 2: Description
 	opts.Description = ui.PromptText("Description", "")
 
-	// Step 3: Template
+	// Step 3: Template (all 14 templates)
 	templates := []ui.Choice{
 		{Label: "Go", Description: "Standard Go project layout", Value: "go"},
 		{Label: "Python", Description: "Standard Python project layout", Value: "python"},
 		{Label: "Node.js", Description: "Standard Node.js project layout", Value: "node"},
+		{Label: "TypeScript", Description: "Standard TypeScript project layout", Value: "typescript"},
 		{Label: "Rust", Description: "Standard Rust project layout", Value: "rust"},
+		{Label: "Java", Description: "Standard Java project layout", Value: "java"},
+		{Label: "Kotlin", Description: "Standard Kotlin project layout", Value: "kotlin"},
+		{Label: "C#", Description: "Standard .NET project layout", Value: "csharp"},
+		{Label: "PHP", Description: "Standard PHP project layout", Value: "php"},
+		{Label: "Ruby", Description: "Standard Ruby project layout", Value: "ruby"},
+		{Label: "Swift", Description: "Standard Swift project layout", Value: "swift"},
+		{Label: "Dart", Description: "Standard Dart project layout", Value: "dart"},
+		{Label: "C/C++", Description: "Standard C/C++ project layout", Value: "c-cpp"},
 		{Label: "Minimal", Description: "Bare minimum structure", Value: "minimal"},
 	}
 
@@ -196,16 +237,26 @@ func runNewInteractive() error {
 		opts.Hooks = true
 	}
 
+	// Step 8: Project files
+	fmt.Println()
+	ui.Info("Project files:")
+	opts.EditorConfig = ui.PromptConfirm("Generate .editorconfig?", true)
+	opts.Codeowners = ui.PromptConfirm("Generate CODEOWNERS in .github?", false)
+	opts.Security = ui.PromptConfirm("Generate SECURITY.md?", true)
+
 	// Summary
 	ui.HeaderSmall("Project Summary")
 	ui.Box(opts.Name, []string{
-		"Template:    " + opts.Template,
-		"License:     " + opts.License,
-		"Description: " + opts.Description,
-		"Provider:    " + opts.Provider,
-		"Private:     " + fmt.Sprintf("%t", opts.Private),
-		"CI/CD:       " + opts.CI,
-		"Hooks:       " + fmt.Sprintf("%t", opts.Hooks),
+		"Template:     " + opts.Template,
+		"License:      " + opts.License,
+		"Description:  " + opts.Description,
+		"Provider:     " + opts.Provider,
+		"Private:      " + fmt.Sprintf("%t", opts.Private),
+		"CI/CD:        " + opts.CI,
+		"Hooks:        " + fmt.Sprintf("%t", opts.Hooks),
+		"EditorConfig: " + fmt.Sprintf("%t", opts.EditorConfig),
+		"CODEOWNERS:   " + fmt.Sprintf("%t", opts.Codeowners),
+		"SECURITY.md:  " + fmt.Sprintf("%t", opts.Security),
 	})
 
 	fmt.Println()
@@ -237,4 +288,7 @@ func init() {
 	newCmd.Flags().String("ci", "", "CI/CD provider (github-actions, gitlab-ci)")
 	newCmd.Flags().Bool("no-ci", false, "skip CI/CD generation")
 	newCmd.Flags().Bool("hooks", false, "generate Git hooks")
+	newCmd.Flags().Bool("editorconfig", true, "generate .editorconfig file")
+	newCmd.Flags().Bool("codeowners", false, "generate CODEOWNERS file")
+	newCmd.Flags().Bool("security", true, "generate SECURITY.md file")
 }

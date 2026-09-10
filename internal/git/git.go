@@ -50,6 +50,26 @@ func (c *Client) AddAll() error {
 	return cmd.Run()
 }
 
+func gitUser() (string, string) {
+	name := getGitConfig("user.name")
+	if name == "" {
+		name = "forgectl"
+	}
+	email := getGitConfig("user.email")
+	if email == "" {
+		email = "forgectl@users.noreply.github.com"
+	}
+	return name, email
+}
+
+func getGitConfig(key string) string {
+	out, err := exec.Command("git", "config", "--global", key).Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
 func (c *Client) Commit(message string) error {
 	w, err := c.repo.Worktree()
 	if err != nil {
@@ -60,10 +80,11 @@ func (c *Client) Commit(message string) error {
 		return err
 	}
 
+	name, email := gitUser()
 	_, err = w.Commit(message, &git.CommitOptions{
 		Author: &object.Signature{
-			Name:  "forgectl",
-			Email: "forgectl@users.noreply.github.com",
+			Name:  name,
+			Email: email,
 			When:  time.Now(),
 		},
 	})
@@ -80,7 +101,7 @@ func (c *Client) AddAndCommit(message string) error {
 	return nil
 }
 
-func (c *Client) CreateOrphanBranch(name string) error {
+func (c *Client) CreateBranch(name string) error {
 	cmd := exec.Command("git", "checkout", "-b", name)
 	cmd.Dir = c.dir
 	cmd.Stdout = os.Stdout
@@ -151,13 +172,14 @@ func (c *Client) Tag(tagName, message string) error {
 		return err
 	}
 	commitHash := head.Hash()
+	name, email := gitUser()
 	if message == "" {
 		_, err = c.repo.CreateTag(tagName, commitHash, nil)
 	} else {
 		_, err = c.repo.CreateTag(tagName, commitHash, &git.CreateTagOptions{
 			Tagger: &object.Signature{
-				Name:  "forgectl",
-				Email: "forgectl@users.noreply.github.com",
+				Name:  name,
+				Email: email,
 				When:  time.Now(),
 			},
 			Message: message,
@@ -257,10 +279,10 @@ func FindRepoRoot(dir string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-func EnsureRepoRoot(dir string) (string, error) {
+func EnsureRepoRoot(dir string) string {
 	root, err := FindRepoRoot(dir)
 	if err != nil {
-		return dir, nil
+		return dir
 	}
-	return filepath.Abs(root)
+	return filepath.Clean(root)
 }

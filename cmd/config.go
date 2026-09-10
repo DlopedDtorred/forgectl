@@ -229,10 +229,3 @@ func init() {
 	configCmd.AddCommand(configShowCmd)
 	configCmd.AddCommand(configPathCmd)
 }
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}

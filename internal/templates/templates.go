@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"text/template"
-	"time"
 )
 
 type ReadmeData struct {
@@ -74,13 +73,18 @@ func GenerateReadme(data ReadmeData) (string, error) {
 
 func GetLicense(name string, year int) (string, error) {
 	licenses := map[string]string{
-		"MIT":     mitLicense(year),
-		"Apache":  apacheLicense(year),
-		"GPL":     gplLicense(year),
-		"BSD":     bsdLicense(year),
-		"ISC":     iscLicense(year),
-		"MPL":     mplLicense(year),
+		"MIT":       mitLicense(year),
+		"Apache":    apacheLicense(year),
+		"GPL":       gplLicense(year),
+		"BSD":       bsdLicense(year),
+		"ISC":       iscLicense(year),
+		"MPL":       mplLicense(year),
 		"Unlicense": unlicenseText(),
+		"AGPL":      agplLicense(year),
+		"LGPL":      lgplLicense(year),
+		"WTFPL":     wtfplLicense(),
+		"EPL":       eplLicense(year),
+		"Artistic":  artisticLicense(year),
 	}
 
 	if license, ok := licenses[name]; ok {
@@ -90,7 +94,7 @@ func GetLicense(name string, year int) (string, error) {
 }
 
 func ListLicenses() []string {
-	return []string{"MIT", "Apache", "GPL", "BSD", "ISC", "MPL", "Unlicense"}
+	return []string{"MIT", "Apache", "GPL", "BSD", "ISC", "MPL", "Unlicense", "AGPL", "LGPL", "WTFPL", "EPL", "Artistic"}
 }
 
 func mitLicense(year int) string {
@@ -246,6 +250,111 @@ For more information, please refer to <http://unlicense.org/>
 `
 }
 
-func init() {
-	_ = time.Now() // ensure time is used
+func agplLicense(year int) string {
+	return fmt.Sprintf(`GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
+
+Copyright (C) %d
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+`, year)
+}
+
+func lgplLicense(year int) string {
+	return fmt.Sprintf(`GNU LESSER GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
+
+Copyright (C) %d
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+`, year)
+}
+
+func wtfplLicense() string {
+	return `            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO.
+`
+}
+
+func eplLicense(year int) string {
+	return fmt.Sprintf(`Eclipse Public License - v 2.0
+
+    Copyright (c) %d
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0 which is available at
+    https://www.eclipse.org/legal/epl-2.0, or the Apache License, Version 2.0
+    which is available at https://www.apache.org/licenses/LICENSE-2.0.
+
+    SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
+
+    Contributors:
+        %d - initial API and implementation
+`, year, year)
+}
+
+func artisticLicense(year int) string {
+	return fmt.Sprintf(`The Artistic License 2.0
+
+    Copyright (c) %d
+
+    Everyone is permitted to copy and distribute verbatim copies
+    of this license document, but changing it is not allowed.
+
+Preamble
+
+This author and any other party who may include this License header in this
+file or any file containing part of this document grants permission to copy,
+distribute and modify this Distribution as free software under the terms of
+the GNU General Public License version 3. A copy of this license is included
+in the file COPYING or as part of this Distribution. No other rights are
+granted under this License.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, see <https://www.gnu.org/licenses/> or write to the
+Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301, USA.
+`, year)
 }

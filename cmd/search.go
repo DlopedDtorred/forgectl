@@ -67,10 +67,11 @@ Examples:
 
 		// Create provider and list repos
 		provider, err := project.NewProvider(project.RemoteConfig{
-			Provider: remoteCfg.Provider,
-			Token:    remoteCfg.Token,
-			Username: remoteCfg.Username,
-			BaseURL:  remoteCfg.BaseURL,
+			Provider:     remoteCfg.Provider,
+			Token:        remoteCfg.Token,
+			Username:     remoteCfg.Username,
+			BaseURL:      remoteCfg.BaseURL,
+			Organization: remoteCfg.Organization,
 		})
 		if err != nil {
 			return err

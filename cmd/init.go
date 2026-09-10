@@ -35,7 +35,7 @@ Examples:
 		}
 
 		if branch != "" {
-			if err := client.CreateOrphanBranch(branch); err != nil {
+			if err := client.CreateBranch(branch); err != nil {
 				return fmt.Errorf("cannot create branch: %w", err)
 			}
 			ui.Successf("Created and switched to branch: %s", branch)

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/forgectl/forgectl/pkg/ui"
 	"github.com/spf13/cobra"
@@ -43,6 +44,7 @@ func init() {
 	rootCmd.AddCommand(changelogCmd)
 	rootCmd.AddCommand(licenseCmd)
 	rootCmd.AddCommand(releaseCmd)
+	rootCmd.AddCommand(issueCmd)
 	rootCmd.AddCommand(tagCmd)
 	rootCmd.AddCommand(templateCmd)
 	rootCmd.AddCommand(configCmd)
@@ -53,6 +55,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().Bool("json", false, "output in JSON format")
 }
 
 var versionCmd = &cobra.Command{
@@ -76,12 +79,14 @@ func checkGitInstalled() {
 }
 
 func ensureGit() error {
-	_, err := os.Stat("/usr/bin/git")
+	_, err := exec.LookPath("git")
 	if err != nil {
-		_, err = os.Stat("/usr/local/bin/git")
-		if err != nil {
-			return fmt.Errorf("git is not installed or not found in PATH")
-		}
+		return fmt.Errorf("git is not installed or not found in PATH")
 	}
 	return nil
+}
+
+func isJSONOutput(cmd *cobra.Command) bool {
+	val, _ := cmd.Flags().GetBool("json")
+	return val
 }

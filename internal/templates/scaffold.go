@@ -85,6 +85,129 @@ var ScaffoldTemplates = map[string]ScaffoldTemplate{
 			".github/workflows",
 		},
 	},
+	"java": {
+		Name:        "Java",
+		Description: "Standard Java project layout",
+		Directories: []string{
+			"src/main/java",
+			"src/main/resources",
+			"src/test/java",
+			"src/test/resources",
+			"lib",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"csharp": {
+		Name:        "C#",
+		Description: "Standard .NET project layout",
+		Directories: []string{
+			"src",
+			"tests",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"typescript": {
+		Name:        "TypeScript",
+		Description: "Standard TypeScript project layout",
+		Directories: []string{
+			"src",
+			"lib",
+			"test",
+			"tests",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"php": {
+		Name:        "PHP",
+		Description: "Standard PHP project layout",
+		Directories: []string{
+			"src",
+			"public",
+			"tests",
+			"docs",
+			"scripts",
+			"config",
+			".github",
+			".github/workflows",
+		},
+	},
+	"ruby": {
+		Name:        "Ruby",
+		Description: "Standard Ruby project layout",
+		Directories: []string{
+			"app",
+			"lib",
+			"test",
+			"spec",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"swift": {
+		Name:        "Swift",
+		Description: "Standard Swift project layout",
+		Directories: []string{
+			"Sources",
+			"Tests",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"kotlin": {
+		Name:        "Kotlin",
+		Description: "Standard Kotlin project layout",
+		Directories: []string{
+			"src/main/kotlin",
+			"src/test/kotlin",
+			"src/main/resources",
+			"docs",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"dart": {
+		Name:        "Dart",
+		Description: "Standard Dart project layout",
+		Directories: []string{
+			"lib",
+			"bin",
+			"test",
+			"doc",
+			"scripts",
+			".github",
+			".github/workflows",
+		},
+	},
+	"c-cpp": {
+		Name:        "C/C++",
+		Description: "Standard C/C++ project layout",
+		Directories: []string{
+			"src",
+			"include",
+			"lib",
+			"test",
+			"tests",
+			"docs",
+			"scripts",
+			"build",
+			".github",
+			".github/workflows",
+		},
+	},
 }
 
 func GetScaffoldTemplate(name string) (*ScaffoldTemplate, bool) {
@@ -238,6 +361,208 @@ Thumbs.db
 # Environment
 .env
 .env.local
+`,
+		"java": `# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Build directories
+build/
+.gradle/
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+out/
+
+# Environment
+.env
+`,
+		"csharp": `# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Cache
+*.cache
+
+# Binaries and packages
+*.dll
+*.exe
+packages/
+*.nupkg
+
+# Test results
+TestResults/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+`,
+		"typescript": `# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Testing
+coverage/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# Generated files
+*.js.map
+*.d.ts
+!src/**/*.d.ts
+`,
+		"php": `# Dependencies
+vendor/
+
+# Composer lock
+composer.lock
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# PHAR files
+*.phar
+
+# Cache and storage
+cache/
+storage/*.key
+`,
+		"ruby": `# Gem packaging
+*.gem
+
+# Ruby version manager
+.ruby-version
+.ruby-gemset
+
+# Bundler
+.bundle/
+vendor/bundle/
+
+# Temp files
+tmp/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+
+# Coverage
+coverage/
+`,
+		"swift": `# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Xcode
+*.xcuserdata
+DerivedData/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+`,
+		"kotlin": `# Build directories
+build/
+.gradle/
+
+# Compiled class file
+*.class
+
+# Package Files
+*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+out/
+
+# Environment
+.env
+local.properties
+`,
+		"dart": `# Dart
+.dart_tool/
+.packages
+build/
+
+# Pub
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+
+# Generated files
+*.g.dart
+`,
+		"c-cpp": `# Compiled Object files
+*.o
+
+# Static Libraries
+*.a
+
+# Shared Libraries
+*.so
+*.dylib
+
+# Executables
+*.exe
+
+# Build directories
+build/
+out/
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+*.dSYM/
+
+# Environment
+.env
+
+# CMake
+CMakeFiles/
 `,
 	}
 

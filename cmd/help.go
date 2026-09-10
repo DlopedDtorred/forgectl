@@ -72,6 +72,7 @@ func helpOverview() {
 		},
 		{
 			releaseCmd,
+			issueCmd,
 			changelogCmd,
 		},
 		{
@@ -87,11 +88,11 @@ func helpOverview() {
 	}
 
 	groupTitles := []string{
-		"📦  Project creation & scaffolding",
-		"🔧  Git operations",
-		"🏷️  Releases & changelog",
-		"⚙️  Configuration & management",
-		"🛠️  Utilities",
+		"  Project creation & scaffolding",
+		"  Git operations",
+		"  Releases, issues & changelog",
+		"  Configuration & management",
+		"  Utilities",
 	}
 
 	for i, group := range groups {
@@ -104,18 +105,52 @@ func helpOverview() {
 		fmt.Println()
 	}
 
+	ui.Box("Supported Templates", []string{
+		"",
+		"  go         Standard Go project layout",
+		"  python     Standard Python project layout",
+		"  node       Standard Node.js project layout",
+		"  typescript Standard TypeScript project layout",
+		"  rust       Standard Rust project layout",
+		"  java       Standard Java project layout",
+		"  kotlin     Standard Kotlin project layout",
+		"  csharp     Standard .NET project layout",
+		"  php        Standard PHP project layout",
+		"  ruby       Standard Ruby project layout",
+		"  swift      Standard Swift project layout",
+		"  dart       Standard Dart project layout",
+		"  c-cpp      Standard C/C++ project layout",
+		"  minimal    Bare minimum structure",
+		"",
+	})
+
+	ui.Box("Supported Licenses", []string{
+		"",
+		"  MIT        Short and permissive",
+		"  Apache     Apache 2.0 with patent grant",
+		"  GPL        GPL v3 copyleft",
+		"  BSD        BSD 2-Clause permissive",
+		"  ISC        Functionally identical to MIT",
+		"  MPL        MPL 2.0 weak copyleft",
+		"  Unlicense  Public domain dedication",
+		"",
+	})
+
 	ui.Box("Examples", []string{
 		"",
 		"  # Interactive wizard                       ",
 		"  forgectl new                               ",
 		"  forgectl config set                        ",
 		"  forgectl release new                       ",
+		"  forgectl issue new \"Bug report\"            ",
 		"",
 		"  # Direct, scriptable                        ",
 		"  forgectl new app -t go -l MIT -d \"My app\"  ",
 		"  forgectl sync --tags                        ",
 		"  forgectl doctor                             ",
 		"  forgectl remote list                        ",
+		"  forgectl release new v1.0.0 --remote        ",
+		"  forgectl issue new \"Fix\" --labels bug       ",
 		"",
 	})
 	fmt.Println()

@@ -1,33 +1,39 @@
 # forgectl
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Go](https://img.shields.io/badge/Go-1.22+-00ADD8)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![CI](https://img.shields.io/badge/CI-passing-brightgreen)
+![Release](https://img.shields.io/github/v/release/forgectl/forgectl)
 
 > **forge·ctl** — La herramienta universal de gestión de proyectos. Crea, inicializa y gestiona proyectos de desarrollo completos, localmente y en plataformas remotas (GitHub, GitLab, Gitea), con un solo comando.
 
-`forgectl` es una CLI profesional inspirada en la `gh` CLI, pero **global** y no limitada a GitHub. Automatiza todas las tareas que un desarrollador hace al iniciar y mantener un proyecto: scaffolding, Git, repos remotos, CI/CD, licencias, changelogs y releases.
+`forgectl` es una CLI profesional inspirada en la `gh` CLI, pero **global** y no limitada a GitHub. Automatiza todas las tareas que un desarrollador hace al iniciar y mantener un proyecto: scaffolding, Git, repos remotos, CI/CD, licencias, changelogs, releases e issues.
 
 ---
 
-## ✨ Características
+## Características
 
 | Característica | Descripción |
 |---|---|
 | **Wizard interactivo** | Asistentes guiados para `new`, `config`, `template`, `release`, `remote` y más |
 | **Un comando para todo** | Crea carpeta local + repo Git + repo remoto + README + licencia + estructura + commit + push |
 | **Multi-proveedor** | GitHub, GitLab y Gitea (incluidos self-hosted) vía sus APIs REST |
-| **Plantillas de proyecto** | Go, Python, Node.js, Rust y Minimal — con estructura estándar por lenguaje |
+| **Organizaciones** | Soporte de organizaciones para repositorios remotos |
+| **Plantillas de proyecto** | 14 plantillas: Go, Python, Node.js, TypeScript, Rust, Java, Kotlin, C#, PHP, Ruby, Swift, Dart, C/C++ y Minimal |
 | **CI/CD generado** | GitHub Actions y GitLab CI listos según el lenguaje del proyecto |
 | **Git hooks** | pre-commit, pre-push y commit-msg generados automáticamente |
-| **Licencias** | MIT, Apache 2.0, GPL v3, BSD, ISC, MPL 2.0 y Unlicense |
+| **Licencias** | 12 licencias: MIT, Apache, GPL, BSD, ISC, MPL, Unlicense, AGPL, LGPL, WTFPL, EPL y Artistic |
 | **Changelog automático** | Generado desde el historial de Git y los tags |
-| **Releases y tags** | Con opción de auto-generar changelog y hacer push |
+| **Releases** | Tags locales + releases vía API en GitHub, GitLab y Gitea |
+| **Issues** | Crear y listar issues directamente desde la terminal |
+| **Archivos de proyecto** | Genera `.editorconfig`, `CODEOWNERS` y `SECURITY.md` |
+| **Modo JSON** | Salida `--json` para scripting y automatización |
 | **Diagnóstico** | `forgectl doctor` verifica Go, Git, Node, Python, Cargo y tu configuración |
 
 ---
 
-## 🚀 Instalación
+## Instalación
 
 ### Con `install.sh` (recomendado)
 
@@ -71,7 +77,7 @@ forgectl completion fish > ~/.config/fish/completions/forgectl.fish
 
 ---
 
-## 🏁 Quick Start
+## Quick Start
 
 ```bash
 # 1. Configura tu proveedor remoto (interactivo)
@@ -84,12 +90,62 @@ forgectl new
 cd mi-proyecto
 forgectl status          # Estado del repo
 forgectl sync            # pull + push con origin
-forgectl release new v1.0.0 --push --changelog
+
+# 4. Crea un release en el proveedor remoto
+forgectl release new v1.0.0 --remote --push --changelog
+
+# 5. Gestiona issues
+forgectl issue new "Bug: error en login" --labels "bug,urgent"
+forgectl issue list
 ```
 
 ---
 
-## 📖 Guía de comandos
+## Lenguajes soportados
+
+forgectl incluye 14 plantillas de proyecto con estructura estándar, `.gitignore` y configuración de CI/CD específicos para cada lenguaje:
+
+| Plantilla | Lenguaje | Descripción |
+|---|---|---|
+| `go` | Go | Estructura estándar Go (`cmd/`, `internal/`, `pkg/`) |
+| `python` | Python | Estructura estándar Python (`src/`, `tests/`) |
+| `node` | Node.js | Estructura estándar Node.js (`src/`, `lib/`, `test/`) |
+| `typescript` | TypeScript | Estructura estándar TypeScript (`src/`, `lib/`, `test/`) |
+| `rust` | Rust | Estructura estándar Rust (`src/`, `crates/`, `benches/`) |
+| `java` | Java | Estructura estándar Java (`src/main/java`, `src/test/java`) |
+| `kotlin` | Kotlin | Estructura estándar Kotlin (`src/main/kotlin`, `src/test/kotlin`) |
+| `csharp` | C# | Estructura estándar .NET (`src/`, `tests/`) |
+| `php` | PHP | Estructura estándar PHP (`src/`, `public/`, `tests/`) |
+| `ruby` | Ruby | Estructura estándar Ruby (`app/`, `lib/`, `spec/`) |
+| `swift` | Swift | Estructura estándar Swift (`Sources/`, `Tests/`) |
+| `dart` | Dart | Estructura estándar Dart (`lib/`, `bin/`, `test/`) |
+| `c-cpp` | C/C++ | Estructura estándar C/C++ (`src/`, `include/`, `lib/`) |
+| `minimal` | Minimal | Estructura mínima (`src/`, `docs/`) |
+
+---
+
+## Licencias soportadas
+
+forgectl puede generar 12 tipos de licencias automáticamente:
+
+| Licencia | Identificador | Descripción |
+|---|---|---|
+| MIT | `MIT` | Corta y permisiva |
+| Apache 2.0 | `Apache` | Permisiva con concesión de patentes |
+| GPL v3 | `GPL` | Copyleft, obras derivadas deben ser GPL |
+| BSD 2-Clause | `BSD` | Permisiva, similar a MIT |
+| ISC | `ISC` | Funcionalmente idéntica a MIT |
+| MPL 2.0 | `MPL` | Copyleft débil, a nivel de archivo |
+| Unlicense | `Unlicense` | Dedicación al dominio público |
+| AGPL v3 | `AGPL` | GPL con cláusula de red |
+| LGPL v3 | `LGPL` | GPL con excepción de enlazado |
+| WTFPL | `WTFPL` | "Do What The Fuck You Want To" |
+| EPL 2.0 | `EPL` | Licencia Eclipse |
+| Artistic 2.0 | `Artistic` | Licencia Artística (Perl) |
+
+---
+
+## Guía de comandos
 
 ### Creación de proyectos
 
@@ -101,6 +157,12 @@ forgectl new
 forgectl new mi-app -t go -l MIT -d "Mi aplicación"
 forgectl new mi-app --private --no-remote
 forgectl new mi-app --ci github-actions --hooks
+
+# Con archivos de proyecto
+forgectl new mi-app --editorconfig --codeowners --security
+
+# Salida JSON para scripting
+forgectl new mi-app -t go -l MIT --json
 ```
 
 `forgectl new` genera automáticamente:
@@ -110,13 +172,38 @@ mi-app/
 ├── .git/                  # Repositorio Git inicializado
 ├── .github/workflows/     # CI (si se solicita)
 ├── .gitignore             # Según el lenguaje
+├── .editorconfig          # Configuración del editor (si se solicita)
+├── CODEOWNERS             # Propietarios del código (si se solicita)
+├── SECURITY.md            # Política de seguridad (si se solicita)
 ├── LICENSE                # Licencia elegida
 ├── README.md              # README profesional
-├── cmd/                   # Estructura Go
+├── cmd/                   # Estructura Go (ejemplo)
 ├── internal/
 ├── pkg/
 ├── src/
 └── ...
+```
+
+### Gestión de issues
+
+```bash
+# Crear issue (interactivo)
+forgectl issue new
+
+# Crear issue directo
+forgectl issue new "Bug: error en login"
+forgectl issue new "Feature: modo oscuro" --body "Descripción detallada..."
+forgectl issue new "Task" --labels "bug,help wanted"
+
+# Listar issues del repositorio remoto
+forgectl issue list
+
+# Especificar proveedor remoto
+forgectl issue new "Bug" --remote gitlab
+forgectl issue list --remote gitea
+
+# Salida JSON
+forgectl issue list --json
 ```
 
 ### Git
@@ -133,11 +220,35 @@ forgectl tag v1.0.0 -m "Versión 1.0"   # Crear tag
 ### Releases y changelog
 
 ```bash
-forgectl release new                   # Wizard
-forgectl release new v1.0.0 --push     # Directo + push
-forgectl release new v1.0.0 --changelog  # + auto-genera CHANGELOG.md
-forgectl release list                  # Ver releases
-forgectl changelog gen                 # Generar changelog desde git
+# Wizard interactivo
+forgectl release new
+
+# Crear release con tag local
+forgectl release new v1.0.0 --push
+forgectl release new v1.0.0 --changelog
+
+# Crear release en el proveedor remoto
+forgectl release new v1.0.0 --remote --push
+
+# Solo crear en el proveedor remoto (sin tag local)
+forgectl release new v1.0.0 --remote-only
+
+# Release draft o prerelease
+forgectl release new v1.0.0-rc.1 --remote --draft
+forgectl release new v1.0.0-rc.1 --remote --prerelease
+
+# Listar releases locales
+forgectl release list
+
+# Listar releases del proveedor remoto
+forgectl release list --remote
+
+# Salida JSON
+forgectl release list --json
+forgectl release list --remote --json
+
+# Generar changelog
+forgectl changelog gen
 ```
 
 ### Plantillas
@@ -167,6 +278,7 @@ forgectl config reset                   # Resetear a defaults
 # Configuración manual directa:
 forgectl config set remotes.github.token ghp_xxx
 forgectl config set remotes.github.username mi_user
+forgectl config set remotes.github.organization mi-org
 forgectl config set default_license Apache
 ```
 
@@ -192,9 +304,20 @@ forgectl doctor                         # Verifica todo tu entorno
 forgectl doctor --fix                   # Intenta arreglar issues
 ```
 
+### Flags globales
+
+Todos los comandos que interactúan con proveedores remotos soportan el flag `--remote` para especificar qué configuración remota utilizar. Muchos comandos también soportan `--json` para salida estructurada:
+
+```bash
+# Salida JSON para scripting
+forgectl issue list --json | jq '.[].title'
+forgectl release list --remote github --json | jq '.[].tag_name'
+forgectl new mi-app -t go --json | jq '.path'
+```
+
 ---
 
-## ⚙️ Configuración
+## Configuración
 
 La configuración se guarda en `~/.forgectl/config.yaml`:
 
@@ -207,6 +330,7 @@ remotes:
     provider: github
     token: ghp_xxxxxxxx
     username: mi_user
+    organization: mi-org          # Organización (opcional)
     base_url: https://github.com
     default: true
   gitlab:
@@ -229,11 +353,25 @@ projects:
     local_path: /home/user/mi-app
 ```
 
+### Campo `organization`
+
+El campo `organization` en la configuración remota permite crear repositorios en organizaciones en lugar de en el usuario personal. Cuando se configura, los repositorios se crearán en la organización especificada:
+
+```yaml
+remotes:
+  github:
+    provider: github
+    token: ghp_xxxxxxxx
+    username: mi_user
+    organization: mi-equipo         # Repos se crean en mi-equipo/
+    base_url: https://github.com
+```
+
 > **Seguridad**: los tokens se guardan en texto plano en tu directorio `~/.forgectl`. Considera protegerlo con `chmod 700 ~/.forgectl`.
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 forgectl/
@@ -243,19 +381,26 @@ forgectl/
 │   ├── new.go                       # Forgectl new (con wizard)
 │   ├── config.go                    # Configuración (con wizard)
 │   ├── remote.go                    # Gestión de remotes
-│   ├── remote.go                    # Doctor, open, search
-│   └── ...                          # sync, push, pull, status, tags,
-│                                    #   release, changelog, license, template, project
+│   ├── release.go                   # Releases y tags
+│   ├── issue.go                     # Gestión de issues
+│   ├── doctor.go                    # Diagnóstico
+│   └── ...                          # sync, push, pull, status, tag,
+│                                    #   changelog, license, template, project
 ├── internal/
 │   ├── config/                      # Viper configuration
 │   ├── git/                         # Operaciones Git (go-git + CLI)
-│   ├── templates/                   # README, licencias, scaffolding, CI/CD, hooks
+│   ├── templates/                   # Plantillas de archivos
+│   │   ├── templates.go             # Licencias y README
+│   │   ├── scaffold.go              # Estructuras de proyecto y .gitignore
+│   │   ├── ci.go                    # Configuración CI/CD
+│   │   └── projectfiles.go          # .editorconfig, CODEOWNERS, SECURITY.md
 │   └── project/                     # Manager de proyectos + Providers
 │       ├── provider.go              # Interfaz Provider
 │       ├── github.go                # API GitHub REST
 │       ├── gitlab.go                # API GitLab v4
 │       └── gitea.go                 # API Gitea v1
 └── pkg/
+    ├── errors/                      # Errores personalizados
     └── ui/                          # UI kit: prompts, spinner, colores, boxes
 ```
 
@@ -269,7 +414,7 @@ forgectl/
 
 ---
 
-## 🧩 Extender forgectl
+## Extender forgectl
 
 ### Añadir un nuevo proveedor
 
@@ -287,6 +432,10 @@ type Provider interface {
     GetRepository(name string) (*Repository, error)
     ListRepositories() ([]*Repository, error)
     GetCurrentUsername() (string, error)
+    CreateRelease(repoName, tagName, name, body string, draft, prerelease bool) (*Release, error)
+    ListReleases(repoName string) ([]*Release, error)
+    CreateIssue(repoName, title, body string, labels []string) (*Issue, error)
+    ListIssues(repoName string) ([]*Issue, error)
 }
 ```
 
@@ -300,11 +449,15 @@ En `internal/templates/scaffold.go`, añade al mapa `ScaffoldTemplates`:
 "java": {
     Name:        "Java",
     Description: "Standard Java project layout",
-    Directories: []string{"src/main/java", "src/test/java", "...",},
+    Directories: []string{"src/main/java", "src/test/java"},
 },
 ```
 
-Añade también su `.gitignore` y plantillas de CI en `internal/templates/ci.go`.
+Añade también su `.gitignore` en `GetGitignore`, plantillas de CI en `internal/templates/ci.go`, y `.editorconfig` en `GetEditorConfig` en `internal/templates/projectfiles.go`.
+
+### Añadir una licencia
+
+En `internal/templates/templates.go`, añade al mapa `licenses` de `GetLicense` y a `ListLicenses`.
 
 ### Añadir un comando
 
@@ -325,13 +478,9 @@ func init() {
 }
 ```
 
-### Añadir una licencia
-
-En `internal/templates/templates.go`, añade al mapa `licenses` de `GetLicense` y a `ListLicenses`.
-
 ---
 
-## 🛠️ Roadmap
+## Roadmap
 
 - [x] Wizard interactivo completo
 - [x] Multi-proveedor (GitHub, GitLab, Gitea)
@@ -339,19 +488,40 @@ En `internal/templates/templates.go`, añade al mapa `licenses` de `GetLicense` 
 - [x] Git hooks automáticos
 - [x] Changelog y releases
 - [x] `doctor` de diagnóstico
-- [ ] Issues iniciales automáticos
-- [ ] Codeowners, .editorconfig, SECURITY.md
-- [ ] Soporte de organizaciones para remotes
+- [x] Issues via API (crear y listar)
+- [x] CODEOWNERS, .editorconfig, SECURITY.md
+- [x] Soporte de organizaciones para remotes
+- [x] Releases via API (GitHub, GitLab, Gitea)
+- [x] Modo `--json` para scripting
 - [ ] Rebase interactivo y gestión de PRs
-- [ ] GitHub/GitLab/Gitea releases via API
-- [ ] Modo `--json` para scripting
 
 ---
 
-## 📄 Licencia
+## Contribuir
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Haz fork del repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Haz commit de tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+Por favor, asegúrate de que tu código pase los tests y el linter antes de enviar el PR:
+
+```bash
+make test
+make lint
+```
+
+---
+
+## Changelog
+
+Los cambios se documentan en [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## Licencia
 
 [MIT](LICENSE) © [forgectl contributors](https://github.com/forgectl/forgectl/graphs/contributors)
-
----
-
-*Made with ❤️ and Go.*

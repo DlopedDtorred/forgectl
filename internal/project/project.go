@@ -34,6 +34,9 @@ type NewProjectOptions struct {
 	CI          string
 	Hooks       bool
 	Directories []string
+	EditorConfig bool
+	Codeowners   bool
+	Security     bool
 }
 
 func (m *Manager) Create(opts NewProjectOptions) error {
@@ -50,6 +53,17 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 	}
 	if opts.Provider == "" {
 		opts.Provider = cfg.DefaultProvider
+	}
+
+	// Defaults for project files
+	if !opts.Codeowners {
+		opts.Codeowners = false
+	}
+	if !opts.Security {
+		opts.Security = true
+	}
+	if !opts.EditorConfig {
+		opts.EditorConfig = true
 	}
 
 	projectPath := opts.LocalPath
@@ -147,7 +161,44 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 	}
 	ui.Success(".gitignore generated")
 
-	// Step 7: CI/CD
+	// Step 7: Project files (.editorconfig, CODEOWNERS, SECURITY.md)
+	ui.Step("Generating project files...")
+	generatedFiles := 0
+
+	if opts.EditorConfig {
+		editorConfigContent := templates.GetEditorConfig(opts.Template)
+		editorConfigPath := filepath.Join(projectPath, ".editorconfig")
+		if err := os.WriteFile(editorConfigPath, []byte(editorConfigContent), 0o644); err == nil {
+			ui.Success(".editorconfig generated")
+			generatedFiles++
+		}
+	}
+
+	if opts.Codeowners {
+		codeownersContent := templates.GetCodeowners("")
+		codeownersDir := filepath.Join(projectPath, ".github")
+		os.MkdirAll(codeownersDir, 0o755)
+		codeownersPath := filepath.Join(codeownersDir, "CODEOWNERS")
+		if err := os.WriteFile(codeownersPath, []byte(codeownersContent), 0o644); err == nil {
+			ui.Success("CODEOWNERS generated")
+			generatedFiles++
+		}
+	}
+
+	if opts.Security {
+		securityContent := templates.GetSecurityMD(opts.Name, "")
+		securityPath := filepath.Join(projectPath, "SECURITY.md")
+		if err := os.WriteFile(securityPath, []byte(securityContent), 0o644); err == nil {
+			ui.Success("SECURITY.md generated")
+			generatedFiles++
+		}
+	}
+
+	if generatedFiles > 0 {
+		ui.Successf("Generated %d project files", generatedFiles)
+	}
+
+	// Step 8: CI/CD
 	if opts.CI != "" && !opts.NoCI {
 		ui.Stepf("Generating %s CI/CD configuration...", opts.CI)
 		ciContent := templates.GetCITemplate(opts.CI, opts.Template)
@@ -174,7 +225,7 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 		}
 	}
 
-	// Step 8: Git hooks
+	// Step 9: Git hooks
 	if opts.Hooks {
 		ui.Step("Generating Git hooks...")
 		hooksDir := filepath.Join(projectPath, ".git", "hooks")
@@ -187,7 +238,7 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 		}
 	}
 
-	// Step 9: Remote repository
+	// Step 10: Remote repository
 	var remoteURL string
 	if !opts.NoRemote {
 		ui.Stepf("Creating remote repository on %s...", opts.Provider)
@@ -211,7 +262,7 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 		}
 	}
 
-	// Step 10: Initial commit
+	// Step 11: Initial commit
 	ui.Step("Creating initial commit...")
 	if err := repo.AddAndCommit("Initial commit: project scaffolded by forgectl"); err != nil {
 		return fmt.Errorf("initial commit failed: %w", err)
@@ -229,7 +280,7 @@ func (m *Manager) Create(opts NewProjectOptions) error {
 	}
 	m.config.AddProject(opts.Name, projectCfg)
 
-	// Step 11: Push
+	// Step 12: Push
 	if remoteURL != "" {
 		ui.Step("Pushing to remote...")
 		branch, _ := repo.CurrentBranch()
@@ -284,10 +335,11 @@ func (m *Manager) getProvider(providerName, remoteName string) (Provider, error)
 			return nil, err
 		}
 		return NewProvider(RemoteConfig{
-			Provider: remote.Provider,
-			Token:    remote.Token,
-			Username: remote.Username,
-			BaseURL:  remote.BaseURL,
+			Provider:     remote.Provider,
+			Token:        remote.Token,
+			Username:     remote.Username,
+			BaseURL:      remote.BaseURL,
+			Organization: remote.Organization,
 		})
 	}
 
@@ -296,9 +348,10 @@ func (m *Manager) getProvider(providerName, remoteName string) (Provider, error)
 		return nil, err
 	}
 	return NewProvider(RemoteConfig{
-		Provider: remote.Provider,
-		Token:    remote.Token,
-		Username: remote.Username,
-		BaseURL:  remote.BaseURL,
+		Provider:     remote.Provider,
+		Token:        remote.Token,
+		Username:     remote.Username,
+		BaseURL:      remote.BaseURL,
+		Organization: remote.Organization,
 	})
 }

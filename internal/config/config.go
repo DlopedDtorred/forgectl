@@ -18,11 +18,12 @@ type Config struct {
 }
 
 type RemoteConfig struct {
-	Provider string `mapstructure:"provider"`
-	Token    string `mapstructure:"token"`
-	Username string `mapstructure:"username"`
-	BaseURL  string `mapstructure:"base_url"`
-	Default  bool   `mapstructure:"default"`
+	Provider     string `mapstructure:"provider"`
+	Token        string `mapstructure:"token"`
+	Username     string `mapstructure:"username"`
+	BaseURL      string `mapstructure:"base_url"`
+	Default      bool   `mapstructure:"default"`
+	Organization string `mapstructure:"organization"`
 }
 
 type ProjectConfig struct {
@@ -160,21 +161,22 @@ func (c *Config) GetDefaultRemote() (*RemoteConfig, error) {
 	for name, r := range cfg.Remotes {
 		if r.Default || name == cfg.DefaultProvider {
 			return &RemoteConfig{
-				Provider: r.Provider,
-				Token:    r.Token,
-				Username: r.Username,
-				BaseURL:  r.BaseURL,
-				Default:  true,
+				Provider:     r.Provider,
+				Token:        r.Token,
+				Username:     r.Username,
+				BaseURL:      r.BaseURL,
+				Default:      true,
+				Organization: r.Organization,
 			}, nil
 		}
 	}
-	for name, r := range cfg.Remotes {
-		_ = name
+	for _, r := range cfg.Remotes {
 		return &RemoteConfig{
-			Provider: r.Provider,
-			Token:    r.Token,
-			Username: r.Username,
-			BaseURL:  r.BaseURL,
+			Provider:     r.Provider,
+			Token:        r.Token,
+			Username:     r.Username,
+			BaseURL:      r.BaseURL,
+			Organization: r.Organization,
 		}, nil
 	}
 	return nil, fmt.Errorf("no remotes configured. Run: forgectl config set provider <name>")
