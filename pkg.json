@@ -1,0 +1,6 @@
+{
+  "name": "forgectl",
+  "version": "1.0.0",
+  "description": "La herramienta universal de gestión de proyectos. Crea, inicializa y gestiona proyectos de desarrollo completos, localmente y en plataformas remotas (GitHub, GitLab, Gitea), con un solo comando.",
+  "install": "https://raw.githubusercontent.com/DlopedDtorred/forgectl/main/install.sh"
+}
